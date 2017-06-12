@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.Ace.Dao.UserDao">
+	<sql id="sqlList">
+		customer_id as customerId,TOKEN_UUID as	tokenUuid
+	</sql>
+	<resultMap id="UserTokenMap" type="UserToken">
+		<result column="customer_id" property="customerId"/>
+		<result column="TOKEN_UUID" property="tokenUuid"/>
+	</resultMap>
+	
+	<!-- 添加用户token关联表 -->
+	<insert id="save" parameterType="UserToken">
+		insert into T_USER_TOKEN (customer_id, TOKEN_UUID)
+		values (#{customerId}, #{tokenUuid})
+	</insert>
+
+	<!-- 根据客户ID查找token -->
+	<select id="findByCusId" parameterType="String" resultType="UserToken">
+		select
+		<include refid="sqlList" />
+		from T_USER_TOKEN where customer_id=#{customerId}
+	</select>
+	<!-- 根据tokenid查找客户ID -->
+	<select id="findByToken" parameterType="String" resultType="String">
+		select	customer_id  from T_USER_TOKEN where TOKEN_UUID=#{uid}
+	</select>
+
+    <!-- 根据客户ID更新用户token -->
+	<update id="update" parameterType="UserToken">
+		update T_USER_TOKEN set
+		TOKEN_UUID = #{m.tokenUuid}
+		where customer_id=#{m.customerId}
+	</update>
+
+</mapper> 
